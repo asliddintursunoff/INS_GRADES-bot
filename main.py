@@ -94,7 +94,7 @@ async def start(update:Update,context:ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(
     "🔐 *Login required*\n\n"
-    "Please enter your *Student ID* (example: `U221222345`).\n\n"
+    "Please enter your *Student ID* (example: `U2210243`).\n\n"
     "This helps us securely retrieve your GPA from the INS system.",
     parse_mode="Markdown"
 )
