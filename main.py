@@ -94,7 +94,7 @@ async def start(update:Update,context:ContextTypes.DEFAULT_TYPE):
 
         await update.message.reply_text(
     "🔐 *Login required*\n\n"
-    "Please enter your *Student ID* (example: `U2410252`).\n\n"
+    "Please enter your *Student ID* (example: `U221222345`).\n\n"
     "This helps us securely retrieve your GPA from the INS system.",
     parse_mode="Markdown"
 )
@@ -111,7 +111,7 @@ async def start(update:Update,context:ContextTypes.DEFAULT_TYPE):
         context.user_data["student_id"] = student_id
         context.user_data["password"] = password
 
-        await update.message.reply_text(f"👋 Hello, *U2410252*\nTo view your INS GPA results, please click the button below.",
+        await update.message.reply_text(f"👋 Hello, student_id\nTo view your INS GPA results, please click the button below.",
                                         reply_markup=INS_results_btn)
 
 
@@ -120,7 +120,7 @@ async def get_student_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not re.fullmatch(r"[Uu]\d{7}", id1):
                 
-        await update.message.reply_text("studentId must start with 'U' or 'u' followed by 7 digits")
+        await update.message.reply_text("student Id must start with 'U' or 'u' followed by 7 digits")
         return STUDENT_ID  
     logger.info(f"entered ID: {id1}")
     await update.message.reply_text(
