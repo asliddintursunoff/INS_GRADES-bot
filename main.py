@@ -111,7 +111,7 @@ async def start(update:Update,context:ContextTypes.DEFAULT_TYPE):
         context.user_data["student_id"] = student_id
         context.user_data["password"] = password
 
-        await update.message.reply_text(f"👋 Hello, student_id\nTo view your INS GPA results, please click the button below.",
+        await update.message.reply_text(f"👋 Hello, {student_id}\nTo view your INS GPA results, please click the button below.",
                                         reply_markup=INS_results_btn)
 
 
