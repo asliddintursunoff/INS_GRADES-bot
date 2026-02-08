@@ -21,7 +21,7 @@ dotenv.load_dotenv()
 API_BASE = os.environ.get("API_BASE")
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 # -----------------------------
 # Helper functions
@@ -55,6 +55,23 @@ async def get_my_timetable(telegram_id: str) -> dict:
         )
         r.raise_for_status()
         return r.json()
+
+
+def shorten_subject(subject: str) -> str:
+    if not subject:
+        return "N/A"
+
+    parts = subject.split()
+    short = ""
+
+    for p in parts:
+        if p.isdigit():
+            short += p
+        else:
+            short += p[0].upper()
+
+    return short
+
 
 # -----------------------------
 # Timetable Formatter
