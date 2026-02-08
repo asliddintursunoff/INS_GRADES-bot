@@ -155,6 +155,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
+    # ---- PRINT ON /start CLICK ----
+    if not exists:
+        print(telegram_id)
+    else:
+        name = (
+            update.effective_user.full_name
+            or update.effective_user.username
+            or "Unknown"
+        )
+        print(telegram_id, name)
+
     if exists:
         await send_timetable_keyboard(update)
     else:
@@ -167,6 +178,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "• Followed by <b>7 digits</b>",
             parse_mode="HTML"
         )
+
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     telegram_id = str(update.effective_user.id)
@@ -206,14 +218,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         context.user_data.clear()
         await update.message.reply_text(
-    "✅ <b>Registration successful!</b>\n\n"
-    "🎒 <b>What this bot can do for you:</b>\n"
-    "• 📅 Show your timetable anytime\n"
-    "• 🌞 <b>Every morning at 08:00</b> it sends <i>today’s classes</i>\n"
-    "• ⏰ <b>30 minutes before each class</b> it reminds you so you don’t get cooked 😅\n\n"
-    "💡 <i>Pro tip:</i> If you ignore the reminders, at least don’t ignore attendance 😄",
-    parse_mode="HTML"
-)
+            "✅ <b>Registration successful!</b>\n\n"
+            "🎒 <b>What this bot can do for you:</b>\n"
+            "• 📅 Show your timetable anytime\n"
+            "• 🌞 <b>Every morning at 08:00</b> it sends <i>today’s classes</i>\n"
+            "• ⏰ <b>30 minutes before each class</b> it reminds you so you don’t get cooked 😅\n\n"
+            "💡 <i>Pro tip:</i> If you ignore the reminders, at least don’t ignore attendance 😄",
+            parse_mode="HTML"
+        )
 
         await send_timetable_keyboard(update)
         return
@@ -231,6 +243,17 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             context.user_data.clear()
             return
+
+        # ---- PRINT ON TIMETABLE CLICK ----
+        if not exists:
+            print(telegram_id)
+        else:
+            name = (
+                update.effective_user.full_name
+                or update.effective_user.username
+                or "Unknown"
+            )
+            print(telegram_id, name)
 
         if not exists:
             await update.message.reply_text(
@@ -271,6 +294,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="HTML",
         reply_markup=ReplyKeyboardRemove()
     )
+
 
 # -----------------------------
 # Keyboard
