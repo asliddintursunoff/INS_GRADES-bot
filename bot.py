@@ -126,7 +126,7 @@ def format_timetable_pretty(data: dict) -> str:
             room = cls.get("room") or "TBA"
 
             lines.append(
-                f"{IND}📘 <b>{subject}</b>    ⏰ <b>{start}–{end} - <i>{room}</i></b>\n"
+                f"{IND}📘 <b>{subject}</b> - ⏰ {start}–{end} - <i>{room}</i>\n"
                 
             )
 
