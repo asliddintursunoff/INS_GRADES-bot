@@ -60,7 +60,6 @@ async def get_my_timetable(telegram_id: str) -> dict:
 # Timetable Formatter
 # -----------------------------
 def format_timetable_pretty(data: dict) -> str:
-    # safer name fallback (avoids "None")
     user_name = (
         data.get("user_first_name")
         or data.get("user_name")
@@ -72,8 +71,8 @@ def format_timetable_pretty(data: dict) -> str:
     if not timetable:
         return (
             f"👋 <b>Hello, {user_name}!</b>\n\n"
-            "🎉 <i>You don’t have any classes scheduled this week.</i>\n"
-            "Go touch grass 🌿 (or code something cool) 😄"
+            "🎉 <i>No classes this week.</i>\n"
+            "Sleep well, king 👑😄"
         )
 
     weekdays_order = [
@@ -93,8 +92,8 @@ def format_timetable_pretty(data: dict) -> str:
         ""
     ]
 
-    # “tabs” using indentation + bullets + tree style
-    IND = "   "  # 3 spaces
+    IND = "   "
+
     for day in weekdays_order:
         day_classes = timetable_by_day[day]
         if not day_classes:
@@ -106,19 +105,19 @@ def format_timetable_pretty(data: dict) -> str:
         for cls in day_classes:
             start = (cls.get("start_time") or "")[:5]
             end = (cls.get("end_time") or "")[:5]
-            subject = cls.get("subject") or "Unknown subject"
+            subject = shorten_subject(cls.get("subject", ""))
             room = cls.get("room") or "TBA"
 
-            # One compact “subclass card”
             lines.append(
-                f"{IND}├─ ⏰ <b>{start}–{end}</b>  •  📘 <b>{subject}</b>\n"
-                f"{IND}│    🏫 <i>{room}</i>"
+                f"{IND}📘 <b>{subject}</b>    ⏰ <b>{start}–{end}</b>\n"
+                f"{IND}{IND}🏫 <i>{room}</i>"
             )
 
-        lines.append("")  # blank line between days
+        lines.append("")
 
-    lines.append("✅ <i>Have a great and productive week!</i> 💪📚")
+    lines.append("✅ <i>Have a great and productive week!</i> 🚀")
     return "\n".join(lines)
+
 
 
 # -----------------------------
