@@ -105,11 +105,11 @@ def format_timetable_pretty(data: dict) -> str:
 
     lines = [
         f"👋 <b>Hello, {user_name}!</b>",
-        f"🎓 <b>Group:</b> <i>{group_name}</i>",
+        f"🎓 <b>Your Group:</b> <i>{group_name}</i>",
         ""
     ]
 
-    IND = "   "
+    IND = "---"
 
     for day in weekdays_order:
         day_classes = timetable_by_day[day]
@@ -126,8 +126,8 @@ def format_timetable_pretty(data: dict) -> str:
             room = cls.get("room") or "TBA"
 
             lines.append(
-                f"{IND}📘 <b>{subject}</b>    ⏰ <b>{start}–{end}</b>\n"
-                f"{IND}{IND}🏫 <i>{room}</i>"
+                f"{IND}📘 <b>{subject}</b>    ⏰ <b>{start}–{end} - <i>{room}</i></b>\n"
+                
             )
 
         lines.append("")
