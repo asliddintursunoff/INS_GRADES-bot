@@ -34,6 +34,8 @@ def intro(first_name: str | None, user_type: str) -> str:
             "• 📊 Attendance + absence/late alerts",
             "• 🧾 Grade notifications",
             "• 🧩 Quiz updates",
+
+            "<b> WE WILL SEND YOU NOTIFICATIONS WHEN ITS ADDED DURING THE DAY!</b>"
         ]
 
     lines += [
