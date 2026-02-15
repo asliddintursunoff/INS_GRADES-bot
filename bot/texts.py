@@ -35,7 +35,9 @@ def intro(first_name: str | None, user_type: str) -> str:
             "• 🧾 Grade notifications",
             "• 🧩 Quiz updates",
 
-            "<b> WE WILL SEND YOU NOTIFICATIONS WHEN ITS ADDED DURING THE DAY!</b>"
+            "<b>\n🔔 We will send you a notification as soon as something new is added during the day!</b>\n\n",
+"📌 To make sure you don’t miss any updates, please <b>pin this chat</b> and <b>unmute</b>in Telegram so it stays at the top of your list."
+
         ]
 
     lines += [
