@@ -38,23 +38,72 @@ async def show_attendance(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             return
 
 
-    header = texts.attendance_title(data.get("first_name"), data.get("last_name"), data.get("student_id"))
-    subjects = data.get("subjects") or []
+        header = texts.attendance_title(
+            data.get("first_name"),
+            data.get("last_name"),
+            data.get("student_id")
+        )
 
-    lines = [header]
-    for s in subjects:
-        code = s.get("subject") or "-"
-        name = s.get("subject_name") or ""
-        prof = s.get("professor_name") or "-"
-        att = s.get("attendance") or {}
-        a = att.get("attendance", 0)
-        ab = att.get("absence", 0)
-        late = att.get("late", 0)
+        subjects = data.get("subjects") or []
 
-        lines.append(f"📘 <b>{code}</b> — {name}")
-        lines.append(f"👨‍🏫 {prof}")
-        lines.append(f"✅ Attended: <b>{a}</b>   ❌ Absence: <b>{ab}</b>   ⏳ Late: <b>{late}</b>")
-        lines.append("")
+        if not subjects:
+            await safe_send_html(
+                update.effective_chat,
+                "No attendance data found.",
+                reply_markup=menu_for_user_type(user_type),
+            )
+            return
 
-    msg = "\n".join(lines).strip()
-    await safe_send_html(update.effective_chat, msg, reply_markup=menu_for_user_type(user_type))
+        # Sort: worst subjects first (absence > late > good)
+        def sort_key(s):
+            att = s.get("attendance") or {}
+            return (-int(att.get("absence", 0)), -int(att.get("late", 0)))
+
+        subjects_sorted = sorted(subjects, key=sort_key)
+
+        lines = [header, ""]
+
+        total_abs = 0
+        total_late = 0
+        total_att = 0
+
+        for s in subjects_sorted:
+            code = s.get("subject") or "-"
+            name = s.get("subject_name") or ""
+            att = s.get("attendance") or {}
+
+            attended = int(att.get("attendance", 0))
+            absence = int(att.get("absence", 0))
+            late = int(att.get("late", 0))
+
+            total_att += attended
+            total_abs += absence
+            total_late += late
+
+            # Status indicator
+            if absence > 0:
+                status = "🔴"
+            elif late > 0:
+                status = "🟠"
+            else:
+                status = "🟢"
+
+            lines.append(f"{status} <b>{code}</b> — {name}")
+            lines.append(
+                f"   ✅ {attended}   ❌ {absence}   ⏳ {late}"
+            )
+            lines.append("")
+
+        # Summary at bottom
+        lines.append("────────────")
+        lines.append(
+            f"📊 <b>Total</b>  |  ✅ {total_att}   ❌ {total_abs}   ⏳ {total_late}"
+        )
+
+        msg = "\n".join(lines).strip()
+
+        await safe_send_html(
+            update.effective_chat,
+            msg,
+            reply_markup=menu_for_user_type(user_type),
+        )

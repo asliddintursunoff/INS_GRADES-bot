@@ -37,14 +37,10 @@ async def show_assignments(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     async with BackendClient(settings.base_url, settings.http_timeout_seconds) as api:
         data = await api.get_eclass_info(telegram_id)
 
-        # NOTE: your condition was wrong. This is safer:
         if isinstance(data, dict) and int(data.get("status_code") or 200) == 403:
             msg = (
                 "🌿 <b>Your data is being prepared.</b>\n\n"
-                "Please give us a little time — everything will be ready soon.\n"
-                "We will notify you within 24 hours when it’s ready.\n\n"
-                "If it takes longer than expected, please contact the admin.\n"
-                "Thank you for your patience 🤍"
+                "Please wait a little — we will notify you once it’s ready 🤍"
             )
             await safe_send_html(update.effective_chat, msg, reply_markup=menu_for_user_type(user_type))
             return
@@ -52,73 +48,59 @@ async def show_assignments(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     header = texts.assignments_title(
         data.get("first_name"), data.get("last_name"), data.get("student_id")
     )
+
     subjects = data.get("subjects") or []
     now = datetime.now(tz)
 
-    # -------------------------
-    # Collect pending assignments
-    # -------------------------
     pending_assignments = []
+    open_quizzes = []
+
     for s in subjects:
         code = s.get("subject") or "-"
+
+        # ------------------
+        # Assignments
+        # ------------------
         assigns = s.get("assignments") or []
         for a in assigns:
             if (a.get("submission") or "").strip() != "No submission":
                 continue
+
             due_str = a.get("due_date") or ""
             due_dt = parse_due_dt(due_str, settings.tz)
             pending_assignments.append((due_dt, code, a))
 
-    pending_assignments.sort(key=lambda x: (x[0] is None, x[0] or datetime.max.replace(tzinfo=tz)))
-
-    # -------------------------
-    # Collect quizzes
-    # -------------------------
-    open_quizzes = []      # not finished / still relevant
-    finished_quizzes = []  # submitted / closed
-
-    for s in subjects:
-        code = s.get("subject") or "-"
+        # ------------------
+        # Quizzes
+        # ------------------
         quizzes = s.get("quizzes") or []
         for q in quizzes:
             closes_str = q.get("quiz_closes") or ""
             closes_dt = parse_due_dt(closes_str, settings.tz)
-
             status = (q.get("status") or "").strip().lower()
-            grade = q.get("grade")
 
-            is_finished = False
+            # show only not finished quizzes
             if status in {"submitted", "finished", "closed"}:
-                is_finished = True
-            elif closes_dt and closes_dt < now:
-                # closed by time
-                is_finished = True
+                continue
 
-            item = (closes_dt, code, q)
+            open_quizzes.append((closes_dt, code, q))
 
-            if is_finished:
-                finished_quizzes.append(item)
-            else:
-                open_quizzes.append(item)
-
+    pending_assignments.sort(key=lambda x: (x[0] is None, x[0] or datetime.max.replace(tzinfo=tz)))
     open_quizzes.sort(key=lambda x: (x[0] is None, x[0] or datetime.max.replace(tzinfo=tz)))
-    finished_quizzes.sort(key=lambda x: (x[0] is None, x[0] or datetime.max.replace(tzinfo=tz)))
 
-    # If nothing to show
-    if not pending_assignments and not open_quizzes and not finished_quizzes:
+    if not pending_assignments and not open_quizzes:
         await safe_send_html(
             update.effective_chat,
-            "✅ <b>All clear!</b>\nNo pending assignments or quizzes right now.",
+            "✅ <b>All clear!</b>\nNo pending assignments or quizzes.",
             reply_markup=menu_for_user_type(user_type),
         )
         return
 
-    # -------------------------
-    # Build message
-    # -------------------------
     lines = [header, ""]
 
-    # Assignments section
+    # ------------------
+    # Assignments Section
+    # ------------------
     if pending_assignments:
         lines.append("📝 <b>Pending Assignments</b>")
         for due_dt, code, a in pending_assignments:
@@ -134,43 +116,29 @@ async def show_assignments(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             if url:
                 lines.append(f"🔗 <a href='{url}'>Open</a>")
     else:
-        lines.append("📝 <b>Pending Assignments</b>\n✅ No pending assignments.")
+        lines.append("📝 <b>Pending Assignments</b>\n✅ None.")
 
     lines.append("")
 
-    # Open quizzes section
+    # ------------------
+    # Quizzes Section
+    # ------------------
     if open_quizzes:
-        lines.append("🧩 <b>Quizzes (Open / Upcoming)</b>")
+        lines.append("🧩 <b>Open Quizzes</b>")
         for closes_dt, code, q in open_quizzes:
             name = q.get("name") or "Quiz"
             url = q.get("url") or ""
             closes_str = q.get("quiz_closes") or "-"
             left = format_time_left(now, closes_dt) if closes_dt else ""
-            status = q.get("status") or "Open"
 
             lines.append(f"\n📘 <b>{code}</b> — <b>{name}</b>")
             lines.append(f"📅 Closes: <b>{closes_str}</b>")
             if left:
                 lines.append(f"⏰ Left: <b>{left}</b>")
-            lines.append(f"📌 Status: <b>{status}</b>")
             if url:
                 lines.append(f"🔗 <a href='{url}'>Open</a>")
     else:
-        lines.append("🧩 <b>Quizzes (Open / Upcoming)</b>\n✅ No open quizzes.")
-
-    lines.append("")
-
-    # Finished quizzes section (keep short: show only last few)
-    if finished_quizzes:
-        lines.append("✅ <b>Recently Finished Quizzes</b>")
-        for closes_dt, code, q in finished_quizzes[-5:]:
-            name = q.get("name") or "Quiz"
-            grade = q.get("grade")
-            closes_str = q.get("quiz_closes") or "-"
-            grade_text = f"{grade}" if grade else "-"
-            lines.append(f"\n📘 <b>{code}</b> — <b>{name}</b>")
-            lines.append(f"📅 Closed: <b>{closes_str}</b>")
-            lines.append(f"🧾 Grade: <b>{grade_text}</b>")
+        lines.append("🧩 <b>Open Quizzes</b>\n✅ None.")
 
     msg = "\n".join(lines).strip()
     await safe_send_html(update.effective_chat, msg, reply_markup=menu_for_user_type(user_type))
