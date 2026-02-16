@@ -42,7 +42,7 @@ async def show_assignments(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             await safe_send_html(update.effective_chat, msg, reply_markup=menu_for_user_type(user_type))
             return
 
-
+    print(data)
     header = texts.assignments_title(data.get("first_name"), data.get("last_name"), data.get("student_id"))
     subjects = data.get("subjects") or []
 
@@ -70,6 +70,7 @@ async def show_assignments(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     now = datetime.now(tz)
 
     lines = [header]
+
     for due_dt, code, a in pending:
         name = a.get("name") or "Assignment"
         url = a.get("url") or ""

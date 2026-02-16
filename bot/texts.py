@@ -1,51 +1,18 @@
 from __future__ import annotations
 
 from typing import Optional
-
 def intro(first_name: str | None, user_type: str) -> str:
     name = first_name or "there"
 
-    lines = [
-        f"👋 Hi <b>{name}</b>!",
-        "",
-        "Welcome to <b>INS Grades</b> 🎓",
-        "Here’s what I can do for you:",
-        "• 📅 Show your timetable",
-        "• ⏰ Send today’s classes at <b>08:00</b>",
-        "• 🔔 Remind you <b>30 minutes</b> before each class (with absence count)",
-    ]
-
-    if user_type == "new_user":
-        lines += [
-            "",
-            "To get started, please register your <b>Student ID</b> 🆕",
-        ]
-    elif user_type == "half_user":
-        lines += [
-            "",
-            "To unlock assignments, attendance, grades, and quizzes:",
-            "🎓 Please connect your <b>E-class</b> from the menu.",
-        ]
-    else:  # full_user
-        lines += [
-            "",
-            "You also have access to:",
-            "• 📝 Assignments + smart due reminders",
-            "• 📊 Attendance + absence/late alerts",
-            "• 🧾 Grade notifications",
-            "• 🧩 Quiz updates",
-
-            "<b>\n🔔 We will send you a notification as soon as something new is added during the day!</b>\n\n",
-"📌 To make sure you don’t miss any updates, please <b>pin this chat</b> and <b>unmute</b>in Telegram so it stays at the top of your list."
-
-        ]
-
-    lines += [
-        "",
-        "✅ Everything is free for you.",
-    ]
-
-    return "\n".join(lines)
+    return (
+        f"👋 Hi <b>{name}</b>!\n\n"
+        "🎓 <b>Never miss anything again.</b>\n\n"
+        "🔔 Assignment deadline reminders (5, 3, 1 day + due day)\n"
+        "🧾 Instant grade notifications\n"
+        "📊 Absence & late alerts immediately\n\n"
+        "📅 Timetable & class reminders included.\n\n"
+        "📌 Pin this chat so you never miss updates."
+    )
 
 
 def ask_student_id() -> str:
@@ -124,42 +91,35 @@ def no_pending_assignments() -> str:
 
 def help_text() -> str:
     return (
-        "🆘 <b>Help</b>\n\n"
-        "Use <b>/start</b> to open the menu anytime.\n\n"
-        "✨ What you can do here:\n"
-        "📅 <b>Timetable</b> — see your weekly schedule\n"
-        "⏰ <b>Daily class plan</b> — every morning at 08:00 you’ll get today’s classes\n"
-        "🔔 <b>Class reminders</b> — a reminder 30 minutes before each class (with absence count)\n\n"
-        "🎓 <b>E-class</b> (connect once to unlock more):\n"
-        "📝 <b>Assignments</b> — see what’s due soon and what’s not submitted\n"
-        "📌 <b>Smart alerts</b> — notifications at 5 days, 3 days, 1 day, and on the due date\n"
-        "🧾 <b>Grades</b> — get a message when your grades are published\n"
-        "🧩 <b>Quizzes</b> — get updates about quizzes\n"
-        "📊 <b>Attendance</b> — get alerts for absence/late and view your stats\n\n"
-        "✅ Everything is free for you.\n\n"
-        "Commands:\n"
-        "• /start — open menu\n"
-        "• /help — show this help\n"
-        "• /about — about the bot"
+        "🆘 <b>What INS Grades does for you</b>\n\n"
+        "📝 <b>Assignments</b>\n"
+        "• Smart reminders before deadline\n"
+        "• Alert if not submitted\n\n"
+        "🧾 <b>Grades</b>\n"
+        "• Get notified as soon as grades are published\n\n"
+        "📊 <b>Attendance</b>\n"
+        "• Instant alert for absence or late\n\n"
+        "📅 <b>Timetable</b>\n"
+        "• Daily plan at 08:00\n"
+        "• 30-min class reminder\n\n"
+        "Use <b>/start</b> anytime."
     )
+
 
 
 
 def about_text() -> str:
     return (
-        "ℹ️ <b>About INS Grades</b>\n\n"
-        "👤 Bot: <b>@ins_gradesbot</b>\n\n"
-        "INS Grades helps you stay on top of your study life:\n"
-        "📅 timetable, ⏰ reminders, 📝 assignments, 📊 attendance, 🧾 grades, and 🧩 quizzes.\n\n"
-        "🔔 Notifications you’ll get:\n"
-        "• new assignment added\n"
-        "• assignment not submitted (5 days, 3 days, 1 day, due day)\n"
-        "• new grades published\n"
-        "• quiz updates\n"
-        "• attendance changes (absence/late)\n\n"
-        "✅ Everything is free for you.\n"
-        "If you ever feel unsure, you can always use the official website instead."
+        "ℹ️ <b>INS Grades</b> — your academic assistant.\n\n"
+        "We help you stay ahead with:\n"
+        "🔔 Assignment reminders\n"
+        "🧾 Grade alerts\n"
+        "📊 Absence notifications\n"
+        "📅 Timetable updates\n\n"
+        "Everything automatic.\n"
+        "Everything free."
     )
+
 
 def generic_error() -> str:
     return "⚠️ Something went wrong. Please try again or use /start."
