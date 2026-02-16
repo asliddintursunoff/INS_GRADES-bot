@@ -95,11 +95,7 @@ async def show_attendance(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
             lines.append("")
 
         # Summary at bottom
-        lines.append("────────────")
-        lines.append(
-            f"📊 <b>Total</b>  |  ✅ {total_att}   ❌ {total_abs}   ⏳ {total_late}"
-        )
-
+        
         msg = "\n".join(lines).strip()
 
         await safe_send_html(
