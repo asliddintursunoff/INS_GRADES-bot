@@ -1,21 +1,21 @@
 from aiogram import Router, F
-from aiogram.types import CallbackQuery
+from aiogram.types import Message
 from bot.api_client import APIClient
 from bot.texts import messages
 from bot.keyboards.main_menu import get_main_menu
 
 router = Router()
 
-@router.callback_query(F.data == "assignments")
-async def handle_assignments(callback: CallbackQuery, api_client: APIClient):
-    telegram_id = callback.from_user.id
+@router.message(F.text == messages.BTN_ASSIGNMENTS)
+async def handle_assignments(message: Message, api_client: APIClient):
+    telegram_id = message.from_user.id
     data = await api_client.get_assignments(telegram_id)
 
     if not data:
-        await callback.answer(messages.ASSIGNMENTS_ERROR, show_alert=True)
+        await message.answer(messages.ASSIGNMENTS_ERROR, parse_mode="HTML")
         return
 
-    response_text = f"{messages.ASSIGNMENTS_HEADER}\n"
+    response_text = messages.ASSIGNMENTS_HEADER
 
     assignments = data.get("assignments", [])
     for item in assignments:
@@ -42,5 +42,4 @@ async def handle_assignments(callback: CallbackQuery, api_client: APIClient):
     user = await api_client.get_user(telegram_id)
     is_subscribed = user.get("is_subscribed", False) if user else True
 
-    await callback.message.answer(response_text, reply_markup=get_main_menu(is_subscribed))
-    await callback.answer()
+    await message.answer(response_text, reply_markup=get_main_menu(is_subscribed), parse_mode="HTML", disable_web_page_preview=True)

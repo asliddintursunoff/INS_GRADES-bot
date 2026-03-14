@@ -1,18 +1,18 @@
 from aiogram import Router, F
-from aiogram.types import CallbackQuery
+from aiogram.types import Message
 from bot.api_client import APIClient
 from bot.texts import messages
 from bot.keyboards.main_menu import get_main_menu
 
 router = Router()
 
-@router.callback_query(F.data == "timetable")
-async def handle_timetable(callback: CallbackQuery, api_client: APIClient):
-    telegram_id = callback.from_user.id
+@router.message(F.text == messages.BTN_TIMETABLE)
+async def handle_timetable(message: Message, api_client: APIClient):
+    telegram_id = message.from_user.id
     timetable_data = await api_client.get_timetable(telegram_id)
 
     if not timetable_data:
-        await callback.answer(messages.TIMETABLE_ERROR, show_alert=True)
+        await message.answer(messages.TIMETABLE_ERROR, parse_mode="HTML")
         return
 
     response_text = f"{messages.TIMETABLE_HEADER}\n"
@@ -20,7 +20,7 @@ async def handle_timetable(callback: CallbackQuery, api_client: APIClient):
     if isinstance(timetable_data, dict):
         for day, sessions in timetable_data.items():
             if not sessions: continue
-            response_text += f"\n📅 {day.upper()}\n"
+            response_text += messages.TIMETABLE_DAY_HEADER.format(day=day.capitalize())
             for session in sessions:
                 response_text += messages.TIMETABLE_ITEM.format(
                     start_time=session.get("start_time", ""),
@@ -33,19 +33,15 @@ async def handle_timetable(callback: CallbackQuery, api_client: APIClient):
     user = await api_client.get_user(telegram_id)
     is_subscribed = user.get("is_subscribed", False) if user else False
 
-    await callback.message.answer(response_text, reply_markup=get_main_menu(is_subscribed))
-    await callback.answer()
+    await message.answer(response_text, reply_markup=get_main_menu(is_subscribed), parse_mode="HTML")
 
-@router.callback_query(F.data == "back_to_main")
-async def handle_back_to_main(callback: CallbackQuery, api_client: APIClient):
-    telegram_id = callback.from_user.id
+@router.message(F.text == messages.BTN_BACK)
+async def handle_back_to_main(message: Message, api_client: APIClient):
+    telegram_id = message.from_user.id
     user = await api_client.get_user(telegram_id)
 
     if user:
-        is_subscribed = user.get("is_subscribed", False)
-        plan_info = messages.PREMIUM_USER if is_subscribed else messages.FREE_USER
-        await callback.message.edit_text(plan_info, reply_markup=get_main_menu(is_subscribed))
+        from bot.handlers.start import show_main_menu
+        await show_main_menu(message, user)
     else:
-        await callback.message.edit_text(messages.SESSION_EXPIRED)
-
-    await callback.answer()
+        await message.answer(messages.SESSION_EXPIRED, parse_mode="HTML")

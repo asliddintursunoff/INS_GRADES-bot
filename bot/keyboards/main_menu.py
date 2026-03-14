@@ -1,14 +1,16 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from bot.texts.messages import BTN_TIMETABLE, BTN_BUY_PREMIUM, BTN_ASSIGNMENTS
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from bot.texts.messages import BTN_TIMETABLE, BTN_BUY_PREMIUM, BTN_ASSIGNMENTS, BTN_BACK
 
-def get_main_menu(is_subscribed: bool) -> InlineKeyboardMarkup:
+def get_main_menu(is_subscribed: bool) -> ReplyKeyboardMarkup:
     buttons = [
-        [InlineKeyboardButton(text=BTN_TIMETABLE, callback_data="timetable")]
+        [KeyboardButton(text=BTN_TIMETABLE)]
     ]
 
     if is_subscribed:
-        buttons.append([InlineKeyboardButton(text=BTN_ASSIGNMENTS, callback_data="assignments")])
+        buttons.append([KeyboardButton(text=BTN_ASSIGNMENTS)])
     else:
-        buttons.append([InlineKeyboardButton(text=BTN_BUY_PREMIUM, callback_data="buy_premium")])
+        buttons.append([KeyboardButton(text=BTN_BUY_PREMIUM)])
 
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    buttons.append([KeyboardButton(text=BTN_BACK)]) # Including back as per example
+
+    return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)

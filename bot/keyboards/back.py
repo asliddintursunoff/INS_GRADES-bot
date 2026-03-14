@@ -1,8 +1,8 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from bot.texts.messages import BTN_BACK
 
-def get_back_keyboard() -> InlineKeyboardMarkup:
+def get_back_keyboard() -> ReplyKeyboardMarkup:
     buttons = [
-        [InlineKeyboardButton(text=BTN_BACK, callback_data="back_to_main")]
+        [KeyboardButton(text=BTN_BACK)]
     ]
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True)

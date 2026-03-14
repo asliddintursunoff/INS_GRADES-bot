@@ -1,62 +1,88 @@
-START_HELLO = "Hello {first_name} {last_name}!"
-PREMIUM_USER = "You are a Premium user."
-FREE_USER = "You are using Free plan."
+START_HELLO = """<b>👋 Hello, {first_name} {last_name}!</b>
+
+Welcome to <b>INS Grades Assistant</b>.
+
+With this bot you can:
+
+📅 View your weekly timetable
+📚 Track assignments and quizzes
+⏰ Never miss important deadlines
+
+Your current plan:
+{plan_info}
+
+{upgrade_info}
+"""
+
+PREMIUM_USER = "<b>🌟 Premium Plan</b>"
+FREE_USER = "<b>🆓 Free Plan</b>"
+UPGRADE_PROMPT = "Upgrade to <b>⭐ Premium</b> to unlock assignment tracking and deadline reminders."
+
 ASK_STUDENT_ID = "Please enter your student ID:"
-REGISTRATION_SUCCESS = "Registration successful!"
-REGISTRATION_ERROR_RETRIEVING = "Error retrieving user after registration."
-REGISTRATION_FAILED = "Registration failed. Please try again."
+REGISTRATION_SUCCESS = "✅ <b>Registration successful!</b>"
+REGISTRATION_ERROR_RETRIEVING = "❌ <b>Error retrieving user after registration.</b>"
+REGISTRATION_FAILED = "❌ <b>Registration failed.</b> Please try again."
 
-TIMETABLE_HEADER = "📅 TIMETABLE"
+TIMETABLE_HEADER = "<b>📅 Weekly Timetable</b>"
+TIMETABLE_DAY_HEADER = "\n<b>{day}</b>\n"
 TIMETABLE_ITEM = """
-{start_time} - {end_time}
-{subject}
-Prof: {professor}
-Room: {room}
+🕘 <b>{start_time} – {end_time}</b>
+📚 {subject}
+👨‍🏫 {professor}
+🏫 Room: {room}
 """
-TIMETABLE_ERROR = "Could not fetch timetable."
+TIMETABLE_ERROR = "❌ <b>Could not fetch timetable.</b>"
 
-PREMIUM_INFO = """
-Premium Features:
+PREMIUM_INFO = """<b>⭐ Premium Features</b>
 
-• Assignment reminders
-• Quiz reminders
-• Deadline alerts
+Upgrade your experience and never miss deadlines.
 
-Price: {price} USD
+Premium includes:
 
-To activate premium please send screenshot of your payment receipt.
+📚 Assignment reminders
+🧠 Quiz alerts
+⏰ Deadline notifications
+
+💰 Price: {price} USD
+
+To activate Premium please send a screenshot of your payment receipt.
+
+After verification your subscription will be activated automatically.
 """
 
-PAYMENT_SUCCESS = "Payment received successfully! Premium activated."
-PAYMENT_FAILED = "Payment verification failed. Please try again or contact admin."
+PAYMENT_SUCCESS = "✅ <b>Payment received successfully! Premium activated.</b>"
+PAYMENT_FAILED = """❌ <b>Payment verification failed.</b>
+
+Please make sure the receipt is clear and try again.
+
+If the problem continues please contact the administrator.
+"""
 PAYMENT_ASK_PHOTO = "Please send a photo of your receipt."
 
-ASSIGNMENTS_HEADER = "📚 Assignments"
+ASSIGNMENTS_HEADER = "<b>📚 Available Assignments</b>\n"
 ASSIGNMENT_ITEM = """
-Subject: {subject}
-Task: {task}
-Deadline: {deadline}
-Time Left: {time_left}
+<b>{subject}</b>
+📝 {task}
+⏰ Deadline: {deadline}
+⌛ Time left: {time_left}
 
-🔗 Open:
-{url}
+🔗 <a href="{url}">Open Assignment</a>
 """
-QUIZZES_SUBHEADER = "\n📝 Quizzes\n"
+QUIZZES_SUBHEADER = "\n<b>📝 Quizzes</b>\n"
 QUIZ_ITEM = """
-Subject: {subject}
-Quiz: {title}
-Deadline: {deadline}
-Time Left: {time_left}
+<b>{subject}</b>
+📝 {title}
+⏰ Deadline: {deadline}
+⌛ Time left: {time_left}
 
-🔗 Open:
-{url}
+🔗 <a href="{url}">Open Quiz</a>
 """
-ASSIGNMENTS_ERROR = "No assignments found or access denied."
+ASSIGNMENTS_ERROR = "❌ <b>No assignments found or access denied.</b>"
 
 BTN_TIMETABLE = "📅 Timetable"
 BTN_BUY_PREMIUM = "⭐ Buy Premium"
 BTN_ASSIGNMENTS = "📚 Assignments"
 BTN_BACK = "⬅ Back"
 
-SESSION_EXPIRED = "Session expired. Please click /start again."
-MAIN_MENU_LABEL = "Main Menu"
+SESSION_EXPIRED = "⚠️ <b>Session expired.</b> Please click /start again."
+MAIN_MENU_LABEL = "<b>Main Menu</b>"
