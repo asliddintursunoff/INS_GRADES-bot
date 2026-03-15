@@ -22,18 +22,22 @@ async def buy_premium_handler(message: Message, state: FSMContext):
         parse_mode="HTML"
     )
 
-    # Send receipt examples
-    await message.answer(messages.RECEIPT_EXAMPLE_TEXT, parse_mode="HTML")
-
     click_path = "bot/assets/click.jpg"
     payme_path = "bot/assets/payme.jpg"
 
     if os.path.exists(click_path) and os.path.exists(payme_path):
         media = [
-            InputMediaPhoto(media=FSInputFile(payme_path)),
+            InputMediaPhoto(
+                media=FSInputFile(payme_path),
+                caption=messages.RECEIPT_EXAMPLE_TEXT,
+                parse_mode="HTML"
+            ),
             InputMediaPhoto(media=FSInputFile(click_path))
         ]
         await message.answer_media_group(media=media)
+    else:
+        # Fallback if images are missing
+        await message.answer(messages.RECEIPT_EXAMPLE_TEXT, parse_mode="HTML")
 
     await state.set_state(PaymentStates.waiting_for_receipt)
 

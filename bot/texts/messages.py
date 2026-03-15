@@ -47,7 +47,8 @@ TIMETABLE_ITEM = "\n🕒 {start_time}–{end_time} | 📘 {abbr} — {subject} |
 
 ASSIGNMENTS_HEADER = "📚 <b>Available Tasks</b>\n"
 ASSIGNMENT_ITEM = """
-📝 <b>{subject}</b>
+📝 {subject_name}
+📌 {name}
 Type: {type}
 ⏰ Deadline: {deadline}
 ⌛ Time left: {time_left}
