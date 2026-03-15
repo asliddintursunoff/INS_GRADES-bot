@@ -58,11 +58,13 @@ TIMETABLE_DAY_HEADER = "\n\n📅 <b>{day}</b>"
 TIMETABLE_ITEM = "\n🕒 <b>{start_time}–{end_time}</b> | 📘 <i>{abbr}</i> — {subject} | 🏫 {room}"
 
 ASSIGNMENTS_HEADER = "📚 <b>Available Tasks</b>\n"
+ASSIGNMENTS_SECTION_HEADER = "\n📝 <b>Assignments</b>\n"
+QUIZZES_SECTION_HEADER = "\n🧠 <b>Quizzes</b>\n"
 ASSIGNMENT_ITEM = """
-📝 {subject_name}
+📝 <b>{subject_name}</b>
 📌 {name}
 Type: {type}
-⏰ Deadline: {deadline}
+⏰ Deadline: <b><i>{deadline}</i></b>
 ⌛ Time left: {time_left}
 
 🔗 <a href="{url}">Open Task</a>

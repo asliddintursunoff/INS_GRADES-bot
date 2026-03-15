@@ -42,28 +42,48 @@ async def handle_assignments(message: Message, api_client: APIClient, state: FSM
         await message.answer(messages.ASSIGNMENTS_ERROR, parse_mode="HTML")
         return
 
-    items = []
-    if isinstance(data, dict):
-        items = data.get("assignments", []) + data.get("quizzes", [])
-    elif isinstance(data, list):
-        items = data
+    assignments = []
+    quizzes = []
 
-    if not items:
+    if isinstance(data, dict):
+        assignments = data.get("assignments", [])
+        quizzes = data.get("quizzes", [])
+    elif isinstance(data, list):
+        # If it's a flat list, we need to sort them by type
+        for item in data:
+            if item.get("type", "").lower() == "quiz":
+                quizzes.append(item)
+            else:
+                assignments.append(item)
+
+    if not assignments and not quizzes:
         await message.answer(messages.ASSIGNMENTS_EMPTY, reply_markup=get_main_menu(True), parse_mode="HTML")
         return
 
     response_text = messages.ASSIGNMENTS_HEADER
-    for item in items:
-        raw_type = item.get("type", "Assignment")
-        display_type = raw_type.capitalize()
 
-        response_text += messages.ASSIGNMENT_ITEM.format(
-            subject_name=item.get("subject_name", "Unknown Subject"),
-            name=item.get("name", "Unnamed Task"),
-            type=display_type,
-            deadline=format_deadline(item.get("deadline", "")),
-            time_left=item.get("time_left", ""),
-            url=item.get("url", "#")
-        )
+    if assignments:
+        response_text += messages.ASSIGNMENTS_SECTION_HEADER
+        for item in assignments:
+            response_text += messages.ASSIGNMENT_ITEM.format(
+                subject_name=item.get("subject_name", "Unknown Subject"),
+                name=item.get("name", "Unnamed Task"),
+                type="Assignment",
+                deadline=format_deadline(item.get("deadline", "")),
+                time_left=item.get("time_left", ""),
+                url=item.get("url", "#")
+            )
+
+    if quizzes:
+        response_text += messages.QUIZZES_SECTION_HEADER
+        for item in quizzes:
+            response_text += messages.ASSIGNMENT_ITEM.format(
+                subject_name=item.get("subject_name", "Unknown Subject"),
+                name=item.get("name", "Unnamed Task"),
+                type="Quiz",
+                deadline=format_deadline(item.get("deadline", "")),
+                time_left=item.get("time_left", ""),
+                url=item.get("url", "#")
+            )
 
     await message.answer(response_text, reply_markup=get_main_menu(True), parse_mode="HTML", disable_web_page_preview=True)
