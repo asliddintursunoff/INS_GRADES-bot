@@ -37,7 +37,7 @@ PREMIUM_ACTIVATION = """⭐ <b>Premium Activation</b>
 ⏰ <b>Notifications</b> for all <b>deadlines</b>.
 
 💰 Price: <b>5 000 so'm</b>
-💳 Card: <code>9860 3501 4877 3798</code>
+💳 Card: <code>5614 6868 3508 2374</code>
 👤 Holder: <b>ASLIDDIN TURSUNOV</b>
 <i>(Tap card number to copy)</i>
 
