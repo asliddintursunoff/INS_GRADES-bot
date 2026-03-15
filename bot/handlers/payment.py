@@ -14,8 +14,21 @@ router = Router()
 class PaymentStates(StatesGroup):
     waiting_for_receipt = State()
 
+async def check_registration(message: Message, api_client: APIClient, state: FSMContext) -> bool:
+    user = await api_client.get_user(message.from_user.id)
+    if not user:
+        from bot.handlers.start import RegistrationStates
+        await message.answer(messages.NOT_REGISTERED, parse_mode="HTML")
+        await message.answer(messages.ASK_STUDENT_ID, parse_mode="HTML")
+        await state.set_state(RegistrationStates.waiting_for_student_id)
+        return False
+    return True
+
 @router.message(F.text == messages.BTN_BUY_PREMIUM)
-async def buy_premium_handler(message: Message, state: FSMContext):
+async def buy_premium_handler(message: Message, state: FSMContext, api_client: APIClient):
+    if not await check_registration(message, api_client, state):
+        return
+
     await message.answer(
         messages.PREMIUM_ACTIVATION,
         reply_markup=get_back_keyboard(),
@@ -42,7 +55,6 @@ async def buy_premium_handler(message: Message, state: FSMContext):
 
 @router.message(PaymentStates.waiting_for_receipt, F.photo)
 async def process_receipt(message: Message, state: FSMContext, api_client: APIClient, bot: Bot):
-    # Send waiting message immediately
     waiting_msg = await message.answer(messages.PAYMENT_WAITING, parse_mode="HTML")
 
     photo = message.photo[-1]
@@ -52,7 +64,6 @@ async def process_receipt(message: Message, state: FSMContext, api_client: APICl
     telegram_id = message.from_user.id
     success, resp_data = await api_client.check_payment(telegram_id, file_bytes.getvalue(), f"receipt_{telegram_id}.jpg")
 
-    # Optionally delete waiting message
     try:
         await waiting_msg.delete()
     except:
@@ -81,10 +92,12 @@ async def process_receipt(message: Message, state: FSMContext, api_client: APICl
 async def not_a_photo(message: Message, api_client: APIClient, state: FSMContext):
     if message.text == messages.BTN_BACK:
         await state.clear()
-        telegram_id = message.from_user.id
-        user = await api_client.get_user(telegram_id)
+        user = await api_client.get_user(message.from_user.id)
         if user:
             from bot.handlers.start import show_main_menu
             await show_main_menu(message, user)
+        else:
+            if not await check_registration(message, api_client, state):
+                return
         return
     await message.answer(messages.PAYMENT_ASK_PHOTO)
