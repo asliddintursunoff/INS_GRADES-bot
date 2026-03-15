@@ -38,11 +38,9 @@ async def handle_assignments(message: Message, api_client: APIClient, state: FSM
         await message.answer(messages.SUBSCRIPTION_EXPIRED, reply_markup=get_main_menu(False), parse_mode="HTML")
         return
 
-    if status != 200 or not data:
+    if status != 200:
         await message.answer(messages.ASSIGNMENTS_ERROR, parse_mode="HTML")
         return
-
-    response_text = messages.ASSIGNMENTS_HEADER
 
     items = []
     if isinstance(data, dict):
@@ -50,6 +48,11 @@ async def handle_assignments(message: Message, api_client: APIClient, state: FSM
     elif isinstance(data, list):
         items = data
 
+    if not items:
+        await message.answer(messages.ASSIGNMENTS_EMPTY, reply_markup=get_main_menu(True), parse_mode="HTML")
+        return
+
+    response_text = messages.ASSIGNMENTS_HEADER
     for item in items:
         raw_type = item.get("type", "Assignment")
         display_type = raw_type.capitalize()

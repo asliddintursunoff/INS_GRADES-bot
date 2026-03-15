@@ -30,8 +30,8 @@ async def buy_premium_handler(message: Message, state: FSMContext, api_client: A
         return
 
     # Send example images first
-    path1 = "bot/assets/1.jpg"
-    path2 = "bot/assets/2.jpg"
+    path1 = "bot/assets/c1.jpg"
+    path2 = "bot/assets/p1.jpg"
 
     if os.path.exists(path1) and os.path.exists(path2):
         media = [

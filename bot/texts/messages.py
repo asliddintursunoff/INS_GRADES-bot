@@ -31,11 +31,17 @@ SUBSCRIPTION_EXPIRED = "⚠️ <b>Subscription expired!</b>\n\nPlease subscribe 
 
 PREMIUM_ACTIVATION = """⭐ <b>Premium Activation</b>
 
-💰 Price: <b>5 000 so'm</b>
-💳 Card: <b>9860 3501 4877 3798</b>
-👤 Holder: <b>ASLIDDIN TURSUNOV</b>
+💎 <b>Premium Features:</b>
+📝 <b>Reminders</b> about new <b>assignments</b>.
+🧠 <b>Alerts</b> for upcoming <b>quizzes</b>.
+⏰ <b>Notifications</b> for all <b>deadlines</b>.
 
-Pay with <b>Click</b> or <b>Payme</b> and send the <b>screenshot</b> of your receipt here.
+💰 Price: <b>5 000 so'm</b>
+💳 Card: <code>9860 3501 4877 3798</code>
+👤 Holder: <b>ASLIDDIN TURSUNOV</b>
+<i>(Tap card number to copy)</i>
+
+Pay with <b>Click</b> or <b>Payme</b> and send the <b>screenshot</b> here.
 
 ⏳ Verification: <b>1–3 minutes</b>.
 
@@ -87,5 +93,6 @@ BTN_NO = "❌ No"
 
 PAYMENT_ASK_PHOTO = "Please send a photo of your receipt."
 SESSION_EXPIRED = "⚠️ <b>Session expired.</b> Try /start."
-ASSIGNMENTS_ERROR = "❌ <b>No assignments found.</b>"
+ASSIGNMENTS_EMPTY = "📚 <b>No assignments yet.</b>"
+ASSIGNMENTS_ERROR = "❌ <b>Could not fetch assignments.</b>"
 TIMETABLE_ERROR = "❌ <b>Could not fetch timetable.</b>"
