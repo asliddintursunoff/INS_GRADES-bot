@@ -29,27 +29,29 @@ async def buy_premium_handler(message: Message, state: FSMContext, api_client: A
     if not await check_registration(message, api_client, state):
         return
 
+    # Send example images first
+    path1 = "bot/assets/1.jpg"
+    path2 = "bot/assets/2.jpg"
+
+    if os.path.exists(path1) and os.path.exists(path2):
+        media = [
+            InputMediaPhoto(
+                media=FSInputFile(path1),
+                caption=messages.RECEIPT_EXAMPLE_TEXT,
+                parse_mode="HTML"
+            ),
+            InputMediaPhoto(media=FSInputFile(path2))
+        ]
+        await message.answer_media_group(media=media)
+    else:
+        await message.answer(messages.RECEIPT_EXAMPLE_TEXT, parse_mode="HTML")
+
+    # Send activation message later
     await message.answer(
         messages.PREMIUM_ACTIVATION,
         reply_markup=get_back_keyboard(),
         parse_mode="HTML"
     )
-
-    click_path = "bot/assets/click.jpg"
-    payme_path = "bot/assets/payme.jpg"
-
-    if os.path.exists(click_path) and os.path.exists(payme_path):
-        media = [
-            InputMediaPhoto(
-                media=FSInputFile(payme_path),
-                caption=messages.RECEIPT_EXAMPLE_TEXT,
-                parse_mode="HTML"
-            ),
-            InputMediaPhoto(media=FSInputFile(click_path))
-        ]
-        await message.answer_media_group(media=media)
-    else:
-        await message.answer(messages.RECEIPT_EXAMPLE_TEXT, parse_mode="HTML")
 
     await state.set_state(PaymentStates.waiting_for_receipt)
 

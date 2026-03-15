@@ -30,9 +30,13 @@ REGISTRATION_SUCCESS = "✅ <b>Registration successful!</b>"
 SUBSCRIPTION_EXPIRED = "⚠️ <b>Subscription expired!</b>\n\nPlease subscribe again to access Assignments and Quizzes."
 
 PREMIUM_ACTIVATION = """⭐ <b>Premium Activation</b>
-💰 Price: <b>5 000 so'm</b>
 
-📷 Send a <b>screenshot</b> of your receipt.
+💰 Price: <b>5 000 so'm</b>
+💳 Card: <b>9860 3501 4877 3798</b>
+👤 Holder: <b>ASLIDDIN TURSUNOV</b>
+
+Pay with <b>Click</b> or <b>Payme</b> and send the <b>screenshot</b> of your receipt here.
+
 ⏳ Verification: <b>1–3 minutes</b>.
 
 Admin: 👤 @asliddin_tursunoff"""
