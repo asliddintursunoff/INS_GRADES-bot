@@ -70,10 +70,7 @@ async def process_receipt(message: Message, state: FSMContext, api_client: APICl
         pass
 
     if success:
-        await message.answer(messages.PAYMENT_SUCCESS, parse_mode="HTML")
-        user = await api_client.get_user(telegram_id)
-        is_subscribed = user.get("is_subscribed", False) if user else True
-        await message.answer("Main Menu", reply_markup=get_main_menu(is_subscribed), parse_mode="HTML")
+        await message.answer(messages.PAYMENT_SUCCESS, reply_markup=get_main_menu(True), parse_mode="HTML")
         await state.clear()
     else:
         error_details = ""

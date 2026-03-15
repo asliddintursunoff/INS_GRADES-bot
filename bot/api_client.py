@@ -39,12 +39,14 @@ class APIClient:
                 return await response.json()
             return None
 
-    async def get_assignments(self, telegram_id: int) -> Optional[Dict[str, Any]]:
+    async def get_assignments(self, telegram_id: int) -> Tuple[int, Any]:
         session = await self.get_session()
         async with session.get(f"{self.base_url}/api/v1/assignment/available/{telegram_id}") as response:
-            if response.status == 200:
-                return await response.json()
-            return None
+            try:
+                data = await response.json()
+            except:
+                data = await response.text()
+            return response.status, data
 
     async def check_payment(self, telegram_id: int, file_bytes: bytes, filename: str) -> Tuple[bool, Any]:
         session = await self.get_session()

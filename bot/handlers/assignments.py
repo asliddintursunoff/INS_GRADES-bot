@@ -32,9 +32,13 @@ async def handle_assignments(message: Message, api_client: APIClient, state: FSM
     if not await check_registration(message, api_client, state):
         return
 
-    data = await api_client.get_assignments(message.from_user.id)
+    status, data = await api_client.get_assignments(message.from_user.id)
 
-    if not data:
+    if status == 403:
+        await message.answer(messages.SUBSCRIPTION_EXPIRED, reply_markup=get_main_menu(False), parse_mode="HTML")
+        return
+
+    if status != 200 or not data:
         await message.answer(messages.ASSIGNMENTS_ERROR, parse_mode="HTML")
         return
 
@@ -59,7 +63,4 @@ async def handle_assignments(message: Message, api_client: APIClient, state: FSM
             url=item.get("url", "#")
         )
 
-    user = await api_client.get_user(message.from_user.id)
-    is_subscribed = user.get("is_subscribed", False) if user else True
-
-    await message.answer(response_text, reply_markup=get_main_menu(is_subscribed), parse_mode="HTML", disable_web_page_preview=True)
+    await message.answer(response_text, reply_markup=get_main_menu(True), parse_mode="HTML", disable_web_page_preview=True)
