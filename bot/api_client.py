@@ -1,5 +1,5 @@
 import aiohttp
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 from bot.config import API_BASE_URL
 
 class APIClient:
@@ -46,11 +46,15 @@ class APIClient:
                 return await response.json()
             return None
 
-    async def check_payment(self, telegram_id: int, file_bytes: bytes, filename: str) -> bool:
+    async def check_payment(self, telegram_id: int, file_bytes: bytes, filename: str) -> Tuple[bool, Any]:
         session = await self.get_session()
         data = aiohttp.FormData()
         data.add_field("telegram_id", str(telegram_id))
         data.add_field("file", file_bytes, filename=filename, content_type="image/jpeg")
 
         async with session.post(f"{self.base_url}/api/v1/transaction/check", data=data) as response:
-            return response.status == 200
+            try:
+                resp_data = await response.json()
+            except:
+                resp_data = await response.text()
+            return response.status == 200, resp_data

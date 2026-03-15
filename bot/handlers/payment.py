@@ -36,19 +36,27 @@ async def buy_premium_handler(message: Message, state: FSMContext):
         ]
         await message.answer_media_group(media=media)
     else:
-        # Fallback if images are missing
         await message.answer(messages.RECEIPT_EXAMPLE_TEXT, parse_mode="HTML")
 
     await state.set_state(PaymentStates.waiting_for_receipt)
 
 @router.message(PaymentStates.waiting_for_receipt, F.photo)
 async def process_receipt(message: Message, state: FSMContext, api_client: APIClient, bot: Bot):
+    # Send waiting message immediately
+    waiting_msg = await message.answer(messages.PAYMENT_WAITING, parse_mode="HTML")
+
     photo = message.photo[-1]
     file_info = await bot.get_file(photo.file_id)
     file_bytes = await bot.download_file(file_info.file_path)
 
     telegram_id = message.from_user.id
-    success = await api_client.check_payment(telegram_id, file_bytes.getvalue(), f"receipt_{telegram_id}.jpg")
+    success, resp_data = await api_client.check_payment(telegram_id, file_bytes.getvalue(), f"receipt_{telegram_id}.jpg")
+
+    # Optionally delete waiting message
+    try:
+        await waiting_msg.delete()
+    except:
+        pass
 
     if success:
         await message.answer(messages.PAYMENT_SUCCESS, parse_mode="HTML")
@@ -57,7 +65,17 @@ async def process_receipt(message: Message, state: FSMContext, api_client: APICl
         await message.answer("Main Menu", reply_markup=get_main_menu(is_subscribed), parse_mode="HTML")
         await state.clear()
     else:
-        await message.answer(messages.PAYMENT_ERROR, reply_markup=get_back_keyboard(), parse_mode="HTML")
+        error_details = ""
+        if isinstance(resp_data, dict) and "detail" in resp_data:
+            error_details = resp_data["detail"]
+        elif isinstance(resp_data, str):
+            error_details = resp_data
+
+        await message.answer(
+            messages.PAYMENT_ERROR.format(error_details=error_details),
+            reply_markup=get_back_keyboard(),
+            parse_mode="HTML"
+        )
 
 @router.message(PaymentStates.waiting_for_receipt, ~F.photo)
 async def not_a_photo(message: Message, api_client: APIClient, state: FSMContext):

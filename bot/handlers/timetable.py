@@ -6,6 +6,14 @@ from bot.keyboards.main_menu import get_main_menu
 
 router = Router()
 
+def clean_time(time_str: str) -> str:
+    # 09:30:00 -> 09:30
+    if not time_str: return ""
+    parts = time_str.split(":")
+    if len(parts) >= 2:
+        return f"{parts[0]}:{parts[1]}"
+    return time_str
+
 @router.message(F.text == messages.BTN_TIMETABLE)
 async def handle_timetable(message: Message, api_client: APIClient):
     telegram_id = message.from_user.id
@@ -26,20 +34,28 @@ async def handle_timetable(message: Message, api_client: APIClient):
             if not sessions: continue
             response_text += messages.TIMETABLE_DAY_HEADER.format(day=day.capitalize())
             for session in sessions:
-                # Ensure subject is handled correctly even if it's a dict or None
-                raw_subject = session.get("subject", "Unknown")
+                # API might return subject as a string or a dict.
+                # If it's showing "Unknown", let's look for common keys.
+                raw_subject = session.get("subject")
+                subject_name = "Unknown"
+
                 if isinstance(raw_subject, dict):
-                    subject_name = raw_subject.get("name", "Unknown")
-                else:
+                    # Check common keys in API response
+                    subject_name = raw_subject.get("name") or raw_subject.get("subject_name") or str(raw_subject)
+                elif raw_subject:
                     subject_name = str(raw_subject)
 
-                # Calculate abbreviation safely
-                abbr = "".join([w[0] for w in subject_name.split() if w[0].isupper()])[:3]
-                if not abbr: abbr = subject_name[:3].upper()
+                # Sometimes subject name is directly in session
+                if subject_name == "Unknown":
+                    subject_name = session.get("subject_name") or session.get("name") or "Unknown"
+
+                # Calculate abbreviation
+                abbr = "".join([w[0] for w in subject_name.split() if w and w[0].isupper()])[:3]
+                if not abbr: abbr = subject_name[:1].upper() or "U"
 
                 response_text += messages.TIMETABLE_ITEM.format(
-                    start_time=session.get("start_time", ""),
-                    end_time=session.get("end_time", ""),
+                    start_time=clean_time(session.get("start_time", "")),
+                    end_time=clean_time(session.get("end_time", "")),
                     abbr=abbr,
                     subject=subject_name,
                     room=session.get("room", "")

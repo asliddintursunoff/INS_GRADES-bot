@@ -42,8 +42,8 @@ Make sure the following are visible:
 • transaction ID"""
 
 TIMETABLE_HEADER = "📅 <b>{name}</b> — Group: <b>{group}</b>"
-TIMETABLE_DAY_HEADER = "\n📅 <b>{day}</b>"
-TIMETABLE_ITEM = "\n🕒 {start_time}–{end_time} | 📘 {abbr} — {subject} | 🏫 {room}"
+TIMETABLE_DAY_HEADER = "\n\n📅 <b>{day}</b>"
+TIMETABLE_ITEM = "\n🕒 <b>{start_time}–{end_time}</b> | 📘 <i>{abbr}</i> — {subject} | 🏫 {room}"
 
 ASSIGNMENTS_HEADER = "📚 <b>Available Tasks</b>\n"
 ASSIGNMENT_ITEM = """
@@ -56,11 +56,15 @@ Type: {type}
 🔗 <a href="{url}">Open Task</a>
 """
 
-PAYMENT_ERROR = """❌ Payment verification failed.
+PAYMENT_WAITING = "⏳ <b><i>Checking your receipt...</i></b>\n\nIt might take <b>1–3 minutes</b>, please wait! 🕒"
 
-Please send a clear screenshot of the correct receipt and wait 1–3 minutes.
+PAYMENT_ERROR = """❌ <b>Payment verification failed.</b>
 
-If the problem continues contact admin:
+{error_details}
+
+Please send the <b>correct</b> receipt image again or click the <b>Back</b> button.
+
+If the problem continues, contact admin:
 👤 @asliddin_tursunoff"""
 
 BTN_TIMETABLE = "📅 Timetable"
