@@ -38,22 +38,23 @@ async def process_student_id(message: Message, state: FSMContext, api_client: AP
             await show_main_menu(message, user)
             await state.clear()
         else:
-            await message.answer(messages.REGISTRATION_ERROR_RETRIEVING, parse_mode="HTML")
+            await message.answer("Error retrieving user.")
     else:
-        await message.answer(messages.REGISTRATION_FAILED, parse_mode="HTML")
+        await message.answer("Registration failed.")
 
 async def show_main_menu(message: Message, user: dict):
-    first_name = user.get("first_name", "")
-    last_name = user.get("last_name", "")
     is_subscribed = user.get("is_subscribed", False)
 
-    plan_info = messages.PREMIUM_USER if is_subscribed else messages.FREE_USER
-    upgrade_info = "" if is_subscribed else messages.UPGRADE_PROMPT
-
-    full_message = messages.START_HELLO.format(
-        first_name=first_name,
-        last_name=last_name,
-        plan_info=plan_info,
-        upgrade_info=upgrade_info
-    )
-    await message.answer(full_message, reply_markup=get_main_menu(is_subscribed), parse_mode="HTML")
+    if not is_subscribed:
+        await message.answer(
+            messages.START_WELCOME,
+            reply_markup=get_main_menu(is_subscribed),
+            parse_mode="HTML"
+        )
+    else:
+        first_name = user.get("first_name", "")
+        await message.answer(
+            f"👋 <b>Welcome back, {first_name}!</b>",
+            reply_markup=get_main_menu(is_subscribed),
+            parse_mode="HTML"
+        )

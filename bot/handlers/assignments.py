@@ -21,23 +21,21 @@ async def handle_assignments(message: Message, api_client: APIClient):
     for item in assignments:
         response_text += messages.ASSIGNMENT_ITEM.format(
             subject=item.get("subject", ""),
-            task=item.get("task", ""),
+            type="Assignment",
             deadline=item.get("deadline", ""),
             time_left=item.get("time_left", ""),
             url=item.get("url", "")
         )
 
     quizzes = data.get("quizzes", [])
-    if quizzes:
-        response_text += messages.QUIZZES_SUBHEADER
-        for item in quizzes:
-            response_text += messages.QUIZ_ITEM.format(
-                subject=item.get("subject", ""),
-                title=item.get("title", ""),
-                deadline=item.get("deadline", ""),
-                time_left=item.get("time_left", ""),
-                url=item.get("url", "")
-            )
+    for item in quizzes:
+        response_text += messages.ASSIGNMENT_ITEM.format(
+            subject=item.get("subject", ""),
+            type="Quiz",
+            deadline=item.get("deadline", ""),
+            time_left=item.get("time_left", ""),
+            url=item.get("url", "")
+        )
 
     user = await api_client.get_user(telegram_id)
     is_subscribed = user.get("is_subscribed", False) if user else True
